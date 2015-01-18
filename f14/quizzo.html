@@ -1,0 +1,865 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>PennApps X Quizzo</title>
+  <style type="text/css">
+    body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #222;
+  background-color: #f7f7f7;
+  font-size: 100%;
+}
+
+.slide {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0; right: 0;
+}
+
+.slide-content {
+  width: 800px;
+  height: 600px;
+  overflow: hidden;
+  margin: 80px auto 0 auto;
+  padding: 30px;
+
+  font-weight: 200;
+  font-size: 200%;
+  line-height: 1.375;
+}
+
+.controls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+.arrow {
+  width: 0; height: 0;
+  border: 30px solid #333;
+  float: left;
+  margin-right: 30px;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.prev {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+
+  border-left-width: 0;
+  border-right-width: 50px;
+}
+
+.next {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+
+  border-left-width: 50px;
+  border-right-width: 0;
+}
+
+.prev:hover {
+  border-right-color: #888;
+  cursor: pointer;
+}
+
+.next:hover {
+  border-left-color: #888;
+  cursor: pointer;
+}
+
+h1 {
+  font-size: 300%;
+  line-height: 1.2;
+  text-align: center;
+  margin: 170px 0 0;
+}
+
+h2 {
+  font-size: 100%;
+  line-height: 1.2;
+  margin: 5px 0;
+  text-align: center;
+  font-weight: 200;
+}
+
+h3 {
+  font-size: 140%;
+  line-height: 1.2;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  padding-bottom: 15px;
+}
+
+ul {
+  padding: 20px 0 0 60px;
+  font-weight: 200;
+  line-height: 1.375;
+}
+
+.author h1 {
+  font-size: 170%;
+  font-weight: 200;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.author h3 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 95%;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: #44a4dd;
+}
+
+a:hover {
+  color: #66b5ff;
+}
+
+pre {
+  font-size: 60%;
+  line-height: 1.3;
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 3px;
+  background-color: #b4b4b4;
+
+  -webkit-transition: width 0.05s ease-out;
+  -moz-transition: width 0.05s ease-out;
+  -o-transition: width 0.05s ease-out;
+  transition: width 0.05s ease-out;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 850px) {
+
+  body {
+    font-size: 70%;
+  }
+
+  .slide-content {
+    width: auto;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  h1 {
+    margin-top: 120px;
+  }
+
+  .prev, .prev:hover {
+    border-right-color: rgba(135, 135, 135, 0.5);
+  }
+
+  .next, .next:hover {
+    border-left-color: rgba(135, 135, 135, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 50%;
+    overflow: hidden;
+  }
+
+  .slide-content {
+    padding: 10px;
+    margin-top: 10px;
+    height: 340px;
+  }
+
+  h1 {
+    margin-top: 50px;
+  }
+
+  ul {
+    padding-left: 25px;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+  }
+
+  @page {
+    size: letter;
+  }
+
+  .hidden {
+    display: inline;
+  }
+
+  html {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  body {
+    margin: 0 auto !important;
+    border: 0;
+    padding: 0;
+    float: none !important;
+    overflow: visible;
+    background: none !important;
+    font-size: 52%;
+  }
+
+  .progress, .controls {
+    display: none;
+  }
+
+  .slide {
+    position: static;
+  }
+
+  .slide-content {
+    border: 1px solid #222;
+    margin-top: 0;
+    margin-bottom: 40px;
+    height: 3.5in;
+    overflow: visible;
+  }
+
+  .slide:nth-child(even) {
+    /* 2 slides per page */
+    page-break-before: always;
+  }
+}
+
+/*
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+*/
+
+code, pre {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  overflow: auto;
+  padding: 6px 10px;
+}
+
+code {
+  padding: 0 5px;
+}
+
+pre>code {
+  margin: 0; padding: 0;
+  border: none;
+  background: transparent;
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+
+  </style>
+</head>
+<body>
+    <div class="progress">
+    <div class="progress-bar"></div>
+  </div>
+
+  <div class="slide" id="slide-1">
+    <section class="slide-content"><h1 id="pennapps-x-quizzo">PennApps X Quizzo</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-2">
+    <section class="slide-content"><h3 id="rules-information">Rules &amp; Information</h3>
+<ul>
+<li>Up to 4 people per team</li>
+<li>4 rounds, 10 questions each</li>
+<li>Come up with a (very) unique team name</li>
+<li>No electronic help!</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-3">
+    <section class="slide-content"><h3 id="how-rounds-work">How rounds work</h3>
+<ul>
+<li>Write down your answers and team name</li>
+<li>We take and grade your answers after each round</li>
+<li>You can double your points for one round<ul>
+<li>Write &quot;double score&quot; before submitting</li>
+</ul>
+</li>
+<li>Top 5 teams with the most points win prizes</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-4">
+    <section class="slide-content"><h3 id="prizes">Prizes</h3>
+<ul>
+<li>1 Parrot AR Drone</li>
+<li>4 Leapmotion controllers</li>
+<li>4 Mini Quadcopters w/cameras</li>
+<li>4 Galileo boards</li>
+<li>4 Arduinos</li>
+<li>4 $25 Namecheap credits + shirts</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-5">
+    <section class="slide-content"><h3 id="four-categories">Four Categories</h3>
+<ul>
+<li>PennApps Sponsors</li>
+<li>Algorithms &amp; Data Structures</li>
+<li>Programming Languages</li>
+<li>Random Tech Trivia</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-6">
+    <section class="slide-content"><h1 id="round-1-pennapps-sponsors">Round 1: PennApps Sponsors</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-7">
+    <section class="slide-content"><h3 id="number-1-sponsors">Number 1 - Sponsors</h3>
+<p>  Roadrunner and Sequoia are the names of things built by which PennApps sponsor?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-8">
+    <section class="slide-content"><h3 id="number-2-sponsors">Number 2 - Sponsors</h3>
+<p>  The parent company of which PennApps sponsor was acquired by Paypal one year ago?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-9">
+    <section class="slide-content"><h3 id="number-3-sponsors">Number 3 - Sponsors</h3>
+<p>  This PennApps sponsor just reached 100 million users in Africa.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-10">
+    <section class="slide-content"><h3 id="number-4-sponsors">Number 4 - Sponsors</h3>
+<p>  The first web browser, Mosaic, was developed by one of the founders of this PennApps sponsor.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-11">
+    <section class="slide-content"><h3 id="number-5-sponsors">Number 5 - Sponsors</h3>
+<p>  This PennApps sponsor was founded in 1963, IPO&#39;d in 1972, and was invested in heavily by Microsoft in 1997.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-12">
+    <section class="slide-content"><h3 id="number-6-sponsors">Number 6 - Sponsors</h3>
+<p>  This PennApps sponsor is well known for their heavy use of the OCaml programming language.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-13">
+    <section class="slide-content"><h3 id="number-7-sponsors">Number 7 - Sponsors</h3>
+<p>  The United States&#39; first air defense system, known as SAGE, was developed by which PennApps sponsor?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-14">
+    <section class="slide-content"><h3 id="number-8-sponsors">Number 8 - Sponsors</h3>
+<p>  This company makes PennApps&#39;s stickers, and promises a 5 day turnaround time.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-15">
+    <section class="slide-content"><h3 id="number-9-sponsors">Number 9 - Sponsors</h3>
+<p>  This PennApps sponsor was founded in 2009, partnered with Ask.com in 2012, and partnered with DuckDuckGo in 2013.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-16">
+    <section class="slide-content"><h3 id="number-10-sponsors">Number 10 - Sponsors</h3>
+<p>  The co-founders of Major League Hacking, Mike Swift and Jon Gottfried, used to be developer evangelists for these two PennApps sponsors.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-17">
+    <section class="slide-content"><h1 id="round-2-algorithms-data-structures">Round 2 - Algorithms &amp; Data Structures</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-18">
+    <section class="slide-content"><h3 id="number-1-algos-data-structures">Number 1 - Algos &amp; Data Structures</h3>
+<p>  The PageRank algorithm has a parameter known as the damping factor, between 0 and 1.</p>
+<p>  This represents the probability that a web surfer will continue clicking on links, rather than navigating to a new URL or closing their browser.</p>
+<p>  What is the damping factor from Google&#39;s original publication of PageRank?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-19">
+    <section class="slide-content"><h3 id="number-2-algos-data-structures">Number 2 - Algos &amp; Data Structures</h3>
+<p>  The fastest known single-source shortest-path implementation is Dijkstra&#39;s algorithm using what type of heap?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-20">
+    <section class="slide-content"><h3 id="number-3-algos-data-structures">Number 3 - Algos &amp; Data Structures</h3>
+<p>  A text editor will use what kind of data structure for efficiently storing and manipulating long strings?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-21">
+    <section class="slide-content"><h3 id="number-4-algos-data-structures">Number 4 - Algos &amp; Data Structures</h3>
+<p>  Which of these tree data structures is, in terms of worst-case asymptotic operation runtimes, not like the others?</p>
+<ul>
+<li>Red-black tree</li>
+<li>B-tree</li>
+<li>Splay tree</li>
+<li>AVL Tree</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-22">
+    <section class="slide-content"><h3 id="number-5-algos-data-structures">Number 5 - Algos &amp; Data Structures</h3>
+<p>  Autocomplete dictionaries are typically represented with what type of data structure?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-23">
+    <section class="slide-content"><h3 id="number-6-algos-data-structures">Number 6 - Algos &amp; Data Structures</h3>
+<p>  A bloom filter is a probabilistic data structure used to test what?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-24">
+    <section class="slide-content"><h3 id="number-7-algos-data-structures">Number 7 - Algos &amp; Data Structures</h3>
+<p>  The Advanced Encryption Standard (AES) is based on a cipher algorithm by what name?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-25">
+    <section class="slide-content"><h3 id="number-8-algos-data-structures">Number 8 - Algos &amp; Data Structures</h3>
+<p>  Name an algorithm that finds a minimum spanning tree for a connected weighted graph.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-26">
+    <section class="slide-content"><h3 id="number-9-algos-data-structures">Number 9 - Algos &amp; Data Structures</h3>
+<p>  Compilers and static analysis tools will often represent a program using this type of tree.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-27">
+    <section class="slide-content"><h3 id="number-10-algos-data-structures">Number 10 - Algos &amp; Data Structures</h3>
+<p>  Depth-first search and breadth-first search have near-identical implementations with just one main difference: the data structure.</p>
+<p>  What data structure does each search use?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-28">
+    <section class="slide-content"><h1 id="round-3-programming-languages">Round 3 - Programming Languages</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-29">
+    <section class="slide-content"><h3 id="number-1-programming-languages">Number 1 - Programming Languages</h3>
+<p>  Name four programming languages whose names end in &#39;Script&#39;.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-30">
+    <section class="slide-content"><h3 id="number-2-programming-languages">Number 2 - Programming Languages</h3>
+<p>  In what year did the programming languages CoffeeScript and Go first appear?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-31">
+    <section class="slide-content"><h3 id="number-3-programming-languages">Number 3 - Programming Languages</h3>
+<p>  Name two programming languages whose names are also a type of snake.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-32">
+    <section class="slide-content"><h3 id="number-4-programming-languages">Number 4 - Programming Languages</h3>
+<p>  Name two programming languages whose names are two unique animals other than snakes.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-33">
+    <section class="slide-content"><h3 id="number-5-programming-languages">Number 5 - Programming Languages</h3>
+<p>  The programming language Ada is named after the woman who many consider to have been the first computer programmer.</p>
+<p>  Who was her father?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-34">
+    <section class="slide-content"><h3 id="number-6-programming-languages">Number 6 - Programming Languages</h3>
+<p>  This programming language was invented in Rio de Janeiro, and its name is Portuguese for &#39;Moon&#39;.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-35">
+    <section class="slide-content"><h3 id="number-7-programming-languages">Number 7 - Programming Languages</h3>
+<p>  The first electronic general-purpose computer, ENIAC, was built here at the University of Pennsylvania.</p>
+<p>  What does ENIAC stand for?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-36">
+    <section class="slide-content"><h3 id="number-8-programming-languages">Number 8 - Programming Languages</h3>
+<p>Which of the following languages came first:</p>
+<ul>
+<li>Ruby</li>
+<li>Objective C</li>
+<li>JavaScript</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-37">
+    <section class="slide-content"><h3 id="number-9-programming-languages">Number 9 - Programming Languages</h3>
+<p>  Name four functional programming languages.</p>
+<p>  Be unique - multiple derivatives of the same language count as just one.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-38">
+    <section class="slide-content"><h3 id="numba-10-programming-languages">Numba 10 - Programming Languages</h3>
+<p>  Name two programming languages that date back to before 1960.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-39">
+    <section class="slide-content"><h1 id="round-4-random-tech-trivia">Round 4: Random Tech Trivia</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-40">
+    <section class="slide-content"><h3 id="number-1-random-tech-trivia">Number 1 - Random Tech Trivia</h3>
+<p>  A &quot;Byte&quot; is a unit of 8 bits.</p>
+<p>  What is the unit for 4 bits?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-41">
+    <section class="slide-content"><h3 id="number-2-random-tech-trivia">Number 2 - Random Tech Trivia</h3>
+<p>  The metric prefix &quot;zepto&quot; refers to ten raised to what power?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-42">
+    <section class="slide-content"><h3 id="number-3-random-tech-trivia">Number 3 - Random Tech Trivia</h3>
+<p>  The Unix operating system was developed in this research lab.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-43">
+    <section class="slide-content"><h3 id="number-4-random-tech-trivia">Number 4 - Random Tech Trivia</h3>
+<p>  What is the screen resolution of the iPhone 6?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-44">
+    <section class="slide-content"><h3 id="number-5-random-tech-trivia">Number 5 - Random Tech Trivia</h3>
+<p>  SanDisk recently announced the launch of a new SD card which sets a capacity record.</p>
+<p>  How much can it hold?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-45">
+    <section class="slide-content"><h3 id="number-6-random-tech-trivia">Number 6 - Random Tech Trivia</h3>
+<p>  How much does the Amazon Fire Phone cost on a 2-year contract?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-46">
+    <section class="slide-content"><h3 id="number-7-random-tech-trivia">Number 7 - Random Tech Trivia</h3>
+<p>  In the Silicon Valley TV show, Pied Piper breaks the theoretical limit of 2.89 to achieve a ground-breaking 5.2 in this metric.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-47">
+    <section class="slide-content"><h3 id="number-8-random-tech-trivia">Number 8 - Random Tech Trivia</h3>
+<p>  What does HTTP status code 304 mean?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-48">
+    <section class="slide-content"><h3 id="number-9-random-tech-trivia">Number 9 - Random Tech Trivia</h3>
+<p>  Linus Torvalds is known for the Linux kernel and for this software development tool.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-49">
+    <section class="slide-content"><h3 id="number-10-random-tech-trivia">Number 10 - Random Tech Trivia</h3>
+<p>  As you know, this is the tenth PennApps.</p>
+<p>  In what year and semester (spring or fall) did the first PennApps happen?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-50">
+    <section class="slide-content"><h1 id="turn-in-your-papers-">Turn in your papers!</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-51">
+    <section class="slide-content"><h1 id="grading-">Grading...</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-52">
+    <section class="slide-content"><div class="author">
+  <h1 class="name">PennApps</h1>
+    <h3 class="twitter">
+      <a href="http://twitter.com/@PennApps">@PennApps</a>
+    </h3>
+    <h3 class="url">
+      <a href="http://PennApps.com">http://PennApps.com</a>
+    </h3>
+</div>
+</section>
+  </div>
+
+  <div class="controls">
+    <div class="arrow prev"></div>
+    <div class="arrow next"></div>
+  </div>
+
+
+  <script type="text/javascript">
+    /**
+ * Returns the current page number of the presentation.
+ */
+function currentPosition() {
+  return parseInt(document.querySelector('.slide:not(.hidden)').id.slice(6));
+}
+
+
+/**
+ * Navigates forward n pages
+ * If n is negative, we will navigate in reverse
+ */
+function navigate(n) {
+  var position = currentPosition();
+  var numSlides = document.getElementsByClassName('slide').length;
+
+  /* Positions are 1-indexed, so we need to add and subtract 1 */
+  var nextPosition = (position - 1 + n) % numSlides + 1;
+
+  /* Normalize nextPosition in-case of a negative modulo result */
+  nextPosition = (nextPosition - 1 + numSlides) % numSlides + 1;
+
+  document.getElementById('slide-' + position).classList.add('hidden');
+  document.getElementById('slide-' + nextPosition).classList.remove('hidden');
+
+  updateProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  window.history.replaceState({} , null, '#' + currentPosition());
+}
+
+
+/**
+ * Sets the progress indicator.
+ */
+function updateProgress() {
+  var progressBar = document.querySelector('.progress-bar');
+
+  if (progressBar !== null) {
+    var numSlides = document.getElementsByClassName('slide').length;
+    var position = currentPosition() - 1;
+    var percent = (numSlides === 1) ? 100 : 100 * position / (numSlides - 1);
+    progressBar.style.width = percent.toString() + '%';
+  }
+}
+
+
+/**
+ * Removes tabindex property from all links on the current slide, sets
+ * tabindex = -1 for all links on other slides. Prevents slides from appearing
+ * out of control.
+ */
+function updateTabIndex() {
+  var allLinks = document.querySelectorAll('.slide a');
+  var position = currentPosition();
+  var currentPageLinks = document.getElementById('slide-' + position).querySelectorAll('a');
+  var i;
+
+  for (i = 0; i < allLinks.length; i++) {
+    allLinks[i].setAttribute('tabindex', -1);
+  }
+
+  for (i = 0; i < currentPageLinks.length; i++) {
+    currentPageLinks[i].removeAttribute('tabindex');
+  }
+}
+
+/**
+ * Determines whether or not we are currently in full screen mode
+ */
+function isFullScreen() {
+  return document.fullscreenElement ||
+         document.mozFullScreenElement ||
+         document.webkitFullscreenElement ||
+         document.msFullscreenElement;
+}
+
+/**
+ * Toggle fullScreen mode on document element.
+ * Works on chrome (>= 15), firefox (>= 9), ie (>= 11), opera(>= 12.1), safari (>= 5).
+ */
+function toggleFullScreen() {
+  /* Convenient renames */
+  var docElem = document.documentElement;
+  var doc = document;
+
+  docElem.requestFullscreen =
+      docElem.requestFullscreen ||
+      docElem.msRequestFullscreen ||
+      docElem.mozRequestFullScreen ||
+      docElem.webkitRequestFullscreen.bind(docElem, Element.ALLOW_KEYBOARD_INPUT);
+
+  doc.exitFullscreen =
+      doc.exitFullscreen ||
+      doc.msExitFullscreen ||
+      doc.mozCancelFullScreen ||
+      doc.webkitExitFullscreen;
+
+  isFullScreen() ? doc.exitFullscreen() : docElem.requestFullscreen();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Update the tabindex to prevent weird slide transitioning
+  updateTabIndex();
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1);
+  if (page) {
+    navigate(parseInt(page) - 1);
+  }
+
+  document.onkeydown = function (e) {
+    var kc = e.keyCode;
+
+    // left, down, H, J, backspace, PgUp - BACK
+    // up, right, K, L, space, PgDn - FORWARD
+    // enter - FULLSCREEN
+    if (kc === 37 || kc === 40 || kc === 8 || kc === 72 || kc === 74 || kc === 33) {
+      navigate(-1);
+    } else if (kc === 38 || kc === 39 || kc === 32 || kc === 75 || kc === 76 || kc === 34) {
+      navigate(1);
+    } else if (kc === 13) {
+      toggleFullScreen();
+    }
+  };
+
+  if (document.querySelector('.next') && document.querySelector('.prev')) {
+    document.querySelector('.next').onclick = function (e) {
+      e.preventDefault();
+      navigate(1);
+    };
+
+    document.querySelector('.prev').onclick = function (e) {
+      e.preventDefault();
+      navigate(-1);
+    };
+  }
+});
+
+
+  </script>
+</body>
+</html>

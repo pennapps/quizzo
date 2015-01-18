@@ -1,0 +1,877 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>PennguinApps Quizzo</title>
+  <style type="text/css">
+    body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #222;
+  background-color: #f7f7f7;
+  font-size: 100%;
+}
+
+.slide {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0; right: 0;
+}
+
+.slide-content {
+  width: 800px;
+  height: 600px;
+  overflow: hidden;
+  margin: 80px auto 0 auto;
+  padding: 30px;
+
+  font-weight: 200;
+  font-size: 200%;
+  line-height: 1.375;
+}
+
+.controls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+.arrow {
+  width: 0; height: 0;
+  border: 30px solid #333;
+  float: left;
+  margin-right: 30px;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.prev {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+
+  border-left-width: 0;
+  border-right-width: 50px;
+}
+
+.next {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+
+  border-left-width: 50px;
+  border-right-width: 0;
+}
+
+.prev:hover {
+  border-right-color: #888;
+  cursor: pointer;
+}
+
+.next:hover {
+  border-left-color: #888;
+  cursor: pointer;
+}
+
+h1 {
+  font-size: 300%;
+  line-height: 1.2;
+  text-align: center;
+  margin: 170px 0 0;
+}
+
+h2 {
+  font-size: 100%;
+  line-height: 1.2;
+  margin: 5px 0;
+  text-align: center;
+  font-weight: 200;
+}
+
+h3 {
+  font-size: 140%;
+  line-height: 1.2;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  padding-bottom: 15px;
+}
+
+ul {
+  padding: 20px 0 0 60px;
+  font-weight: 200;
+  line-height: 1.375;
+}
+
+.author h1 {
+  font-size: 170%;
+  font-weight: 200;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.author h3 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 95%;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: #44a4dd;
+}
+
+a:hover {
+  color: #66b5ff;
+}
+
+pre {
+  font-size: 60%;
+  line-height: 1.3;
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 3px;
+  background-color: #b4b4b4;
+
+  -webkit-transition: width 0.05s ease-out;
+  -moz-transition: width 0.05s ease-out;
+  -o-transition: width 0.05s ease-out;
+  transition: width 0.05s ease-out;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 850px) {
+
+  body {
+    font-size: 70%;
+  }
+
+  .slide-content {
+    width: auto;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  h1 {
+    margin-top: 120px;
+  }
+
+  .prev, .prev:hover {
+    border-right-color: rgba(135, 135, 135, 0.5);
+  }
+
+  .next, .next:hover {
+    border-left-color: rgba(135, 135, 135, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 50%;
+    overflow: hidden;
+  }
+
+  .slide-content {
+    padding: 10px;
+    margin-top: 10px;
+    height: 340px;
+  }
+
+  h1 {
+    margin-top: 50px;
+  }
+
+  ul {
+    padding-left: 25px;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+  }
+
+  @page {
+    size: letter;
+  }
+
+  .hidden {
+    display: inline;
+  }
+
+  html {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  body {
+    margin: 0 auto !important;
+    border: 0;
+    padding: 0;
+    float: none !important;
+    overflow: visible;
+    background: none !important;
+    font-size: 52%;
+  }
+
+  .progress, .controls {
+    display: none;
+  }
+
+  .slide {
+    position: static;
+  }
+
+  .slide-content {
+    border: 1px solid #222;
+    margin-top: 0;
+    margin-bottom: 40px;
+    height: 3.5in;
+    overflow: visible;
+  }
+
+  .slide:nth-child(even) {
+    /* 2 slides per page */
+    page-break-before: always;
+  }
+}
+
+/*
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+*/
+
+code, pre {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  overflow: auto;
+  padding: 6px 10px;
+}
+
+code {
+  padding: 0 5px;
+}
+
+pre>code {
+  margin: 0; padding: 0;
+  border: none;
+  background: transparent;
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+
+  </style>
+</head>
+<body>
+    <div class="progress">
+    <div class="progress-bar"></div>
+  </div>
+
+  <div class="slide" id="slide-1">
+    <section class="slide-content"><h1 id="pennguinapps-quizzo">PennguinApps Quizzo</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-2">
+    <section class="slide-content"><h3 id="rules-information">Rules &amp; Information</h3>
+<ul>
+<li>Up to 4 people per team</li>
+<li>3 rounds, 10, 15, and 10 questions each</li>
+<li>Come up with a (very) unique team name</li>
+<li>No electronic help!</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-3">
+    <section class="slide-content"><h3 id="how-rounds-work">How rounds work</h3>
+<ul>
+<li>Write down your answers and team name</li>
+<li>We take and grade your answers after each round</li>
+<li>Top N teams with the most points win prizes</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-4">
+    <section class="slide-content"><h3 id="prizes">Prizes</h3>
+<ul>
+<li>4 Mini quadcopters</li>
+<li>4 Raspberry Pi&#39;s</li>
+<li>4 more Raspberry Pi&#39;s</li>
+<li>4 $25 iTunes gift cards</li>
+<li>4 Facebook pencil cases</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-5">
+    <section class="slide-content"><h3 id="three-categories">Three Categories</h3>
+<ul>
+<li>PennApps Sponsors</li>
+<li>Programming, etc.</li>
+<li>Surprise!</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-6">
+    <section class="slide-content"><h1 id="round-1-pennapps-sponsors">Round 1: PennApps Sponsors</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-7">
+    <section class="slide-content"><h3 id="number-1-sponsors">Number 1 - Sponsors</h3>
+<p>  This PennApps sponsor has holdings in pro sports teams, including the Philadelphia Flyers and the Philadelphia 76ers.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-8">
+    <section class="slide-content"><h3 id="number-2-sponsors">Number 2 - Sponsors</h3>
+<p>  This PennApps sponsor was founded in 2010 and acquired by Google in 2014.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-9">
+    <section class="slide-content"><h3 id="number-3-sponsors">Number 3 - Sponsors</h3>
+<p>  This sponsor&#39;s Kickstarter raised over $10 million.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-10">
+    <section class="slide-content"><h3 id="number-4-sponsors">Number 4 - Sponsors</h3>
+<p>  This sponsor&#39;s portfolio includes Twitter, Tumblr, Coin, and Postmates.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-11">
+    <section class="slide-content"><h3 id="number-5-sponsors">Number 5 - Sponsors</h3>
+<p>  This PennApps sponsor invested $50 million in Skype before Skype sold to Microsoft for $8.5 billion.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-12">
+    <section class="slide-content"><h3 id="number-6-sponsors">Number 6 - Sponsors</h3>
+<p>  This PennApps sponsor is a member of the SQLite Consortium.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-13">
+    <section class="slide-content"><h3 id="number-7-sponsors">Number 7 - Sponsors</h3>
+<p>  This PennApps sponsor makes the X26, commonly used by police departments.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-14">
+    <section class="slide-content"><h3 id="number-8-sponsors">Number 8 - Sponsors</h3>
+<p>  The CEO of this PennApps sponsor is married to Facebook COO Sheryl Sandberg.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-15">
+    <section class="slide-content"><h3 id="number-9-sponsors">Number 9 - Sponsors</h3>
+<p>  This PennApps sponsor has been parodied in the popular podcast Serial, which they also sponsor.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-16">
+    <section class="slide-content"><h3 id="number-10-sponsors">Number 10 - Sponsors</h3>
+<p>  One of the official colors used by this sponsor is called &quot;Pullman Brown&quot;.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-17">
+    <section class="slide-content"><h1 id="round-2-programming-etc-">Round 2 - Programming, etc.</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-18">
+    <section class="slide-content"><h3 id="number-1-programming-etc-">Number 1 - Programming, etc.</h3>
+<p>  TI-83 calculators can be programmed in what two languages?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-19">
+    <section class="slide-content"><h3 id="number-2-programming-etc-">Number 2 - Programming, etc.</h3>
+<p>  2013 Turing Award winner Leslie Lamport was best known for what language?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-20">
+    <section class="slide-content"><h3 id="number-3-programming-etc-">Number 3 - Programming, etc.</h3>
+<p>  Which of these was <strong>not</strong> made by Jeremy Ashkenas?</p>
+<p>  Backbone.js, Underscore.js, Handlebars.js, CoffeeScript</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-21">
+    <section class="slide-content"><h3 id="number-4-programming-etc-">Number 4 - Programming, etc.</h3>
+<p>  Ajax is a cornerstone of modern web applications. Who was the great-grandfather of the Greek hero known as Ajax the Great?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-22">
+    <section class="slide-content"><h3 id="number-5-programming-etc-">Number 5 - Programming, etc.</h3>
+<p>  According to RFC 2616, general-purpose HTTP servers must support which two methods?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-23">
+    <section class="slide-content"><h3 id="number-6-programming-etc-">Number 6 - Programming, etc.</h3>
+<p>  Who is credited with inventing the mergesort algorithm in 1945?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-24">
+    <section class="slide-content"><h3 id="number-7-programming-etc-">Number 7 - Programming, etc.</h3>
+<p>  How many bits are used in a modern SSL RSA key?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-25">
+    <section class="slide-content"><h3 id="number-8-programming-etc-">Number 8 - Programming, etc.</h3>
+<p>  How many bits are used in a SHA-1 hash?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-26">
+    <section class="slide-content"><h3 id="number-9-programming-etc-">Number 9 - Programming, etc.</h3>
+<p>  Redis can be scripted with what programming language?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-27">
+    <section class="slide-content"><h3 id="number-10-programming-etc-">Number 10 - Programming, etc.</h3>
+<p>  What is the one true dev language?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-28">
+    <section class="slide-content"><h3 id="number-11-programming-etc-">Number 11 - Programming, etc.</h3>
+<p>  How much does it cost to order an Oculus Rift DK2?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-29">
+    <section class="slide-content"><h3 id="number-12-programming-etc-">Number 12 - Programming, etc.</h3>
+<p>  The world record time for a single 3x3 Rubik&#39;s Cube solve is 5.55 seconds.</p>
+<p>  What is the world record time for an average of 5?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-30">
+    <section class="slide-content"><h3 id="number-13-programming-etc-">Number 13 - Programming, etc.</h3>
+<p>  Name all the Millenium Prize Problems which have been solved thus far.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-31">
+    <section class="slide-content"><h3 id="number-14-programming-etc-">Number 14 - Programming, etc.</h3>
+<p>  Name the woman in charge of development of the onboard flight software for the Apollo space program.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-32">
+    <section class="slide-content"><h3 id="number-15-programming-etc-">Number 15 - Programming, etc.</h3>
+<p>  According to Elon Musk, the recent Falcon 9 landing attempt failed because it ran out of what?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-33">
+    <section class="slide-content"><h1 id="round-3-surprise-topic-">Round 3 - Surprise topic!</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-34">
+    <section class="slide-content"><h1 id="penguins-">PENGUINS!</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-35">
+    <section class="slide-content"><h3 id="number-1-penguins">Number 1 - Penguins</h3>
+<p>  Which of these species of penguins is not like the others?</p>
+<p>  Macaroni, Gentoo, Rockhopper, Royal, Erect-crested, Snares</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-36">
+    <section class="slide-content"><h3 id="number-2-penguins">Number 2 - Penguins</h3>
+<p>  Which is the smallest species of penguin?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-37">
+    <section class="slide-content"><h3 id="number-3-penguins">Number 3 - Penguins</h3>
+<p>  What species is the penguin in this picture?
+  <img src="penguin.jpg" alt="penguin"></p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-38">
+    <section class="slide-content"><h3 id="number-4-penguins">Number 4 - Penguins</h3>
+<p>  &#39;The Penguin&#39; is a villain in what superhero movie?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-39">
+    <section class="slide-content"><h3 id="number-5-penguins">Number 5 - Penguins</h3>
+<p>  The animated film Happy Feet features a dancing penguin.</p>
+<p>  Name him, and the girl he marries.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-40">
+    <section class="slide-content"><h3 id="number-6-penguins">Number 6 - Penguins</h3>
+<p>  Name two of the penguins from the animated film Madagascar.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-41">
+    <section class="slide-content"><h3 id="number-7-penguins">Number 7 - Penguins</h3>
+<p>  There are two Sanrio penguin characters; one is Badtz Maru.</p>
+<p>  Name the other.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-42">
+    <section class="slide-content"><h3 id="number-8-penguins">Number 8 - Penguins</h3>
+<p>  Name the final evolved form of the penguin starter Pokemon.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-43">
+    <section class="slide-content"><h3 id="number-9-penguins">Number 9 - Penguins</h3>
+<p>  Name a Yugioh TCG card that features a penguin.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-44">
+    <section class="slide-content"><h3 id="number-10-penguins">Number 10 - Penguins</h3>
+<p>  What is the PennApps Penguin&#39;s name?</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-45">
+    <section class="slide-content"><h1 id="secret-bonus-round">Secret Bonus Round</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-46">
+    <section class="slide-content"><h1 id="you-don-t-know-javascript-">You Don&#39;t Know JavaScript!</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-47">
+    <section class="slide-content"><h3 id="number-1-you-don-t-know-js">Number 1 - You Don&#39;t Know JS</h3>
+<pre><code class="lang-javascript">console.log([] - <span class="number">1</span>)</code></pre>
+<p>What does this print? (in Node/Chrome)</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-48">
+    <section class="slide-content"><h3 id="number-2-you-don-t-know-js">Number 2 - You Don&#39;t Know JS</h3>
+<pre><code class="lang-javascript">console.log([<span class="string">'penguins!'</span>] - <span class="number">1</span>)</code></pre>
+<p>What does this print? (in Node/Chrome)</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-49">
+    <section class="slide-content"><h3 id="number-3-you-don-t-know-js">Number 3 - You Don&#39;t Know JS</h3>
+<pre><code class="lang-javascript"><span class="function"><span class="keyword">function</span> <span class="title">add</span><span class="params">(a, b, c)</span> {</span>
+  console.log(a + b + c)
+}
+
+add.call(<span class="literal">null</span>, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</code></pre>
+<p>What does this print? (in Node/Chrome)</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-50">
+    <section class="slide-content"><h3 id="number-4-you-don-t-know-js">Number 4 - You Don&#39;t Know JS</h3>
+<pre><code class="lang-javascript"><span class="keyword">var</span> m = [
+  [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],
+  [<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>],
+  [<span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>],
+  [<span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">16</span>]
+]
+
+[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].forEach(<span class="function"><span class="keyword">function</span> <span class="params">(x)</span> {</span>
+  console.log(x);
+})</code></pre>
+<p>What does this print? (in Node/Chrome)</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-51">
+    <section class="slide-content"><h3 id="number-5-you-don-t-know-js">Number 5 - You Don&#39;t Know JS</h3>
+<pre><code class="lang-javascript"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span><span class="params">()</span> {</span> <span class="keyword">return</span> <span class="number">1</span> }
+<span class="function"><span class="keyword">function</span> <span class="title">Bar</span><span class="params">()</span> {</span> <span class="keyword">return</span> [] }
+<span class="function"><span class="keyword">function</span> <span class="title">Baz</span><span class="params">()</span> {</span> <span class="keyword">return</span> <span class="keyword">new</span> String(<span class="string">'!'</span>) }
+Foo.prototype.toString = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span> <span class="keyword">return</span> <span class="string">'hello'</span> }
+Bar.prototype.toString = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span> <span class="keyword">return</span> <span class="string">'world'</span> }
+Baz.prototype.toString = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span> <span class="keyword">return</span> <span class="string">'?'</span> }
+console.log(<span class="keyword">new</span> Bar() + <span class="keyword">new</span> Foo() + <span class="keyword">new</span> Baz());</code></pre>
+<p>What does this print? (in Node/Chrome)</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-52">
+    <section class="slide-content"><h1 id="turn-in-your-papers-">Turn in your papers!</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-53">
+    <section class="slide-content"><h1 id="grading-">Grading...</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-54">
+    <section class="slide-content"><div class="author">
+  <h1 class="name">PennApps</h1>
+    <h3 class="twitter">
+      <a href="http://twitter.com/@PennApps">@PennApps</a>
+    </h3>
+    <h3 class="url">
+      <a href="http://PennApps.com">http://PennApps.com</a>
+    </h3>
+</div>
+</section>
+  </div>
+
+  <div class="controls">
+    <div class="arrow prev"></div>
+    <div class="arrow next"></div>
+  </div>
+
+
+  <script type="text/javascript">
+    /**
+ * Returns the current page number of the presentation.
+ */
+function currentPosition() {
+  return parseInt(document.querySelector('.slide:not(.hidden)').id.slice(6));
+}
+
+
+/**
+ * Navigates forward n pages
+ * If n is negative, we will navigate in reverse
+ */
+function navigate(n) {
+  var position = currentPosition();
+  var numSlides = document.getElementsByClassName('slide').length;
+
+  /* Positions are 1-indexed, so we need to add and subtract 1 */
+  var nextPosition = (position - 1 + n) % numSlides + 1;
+
+  /* Normalize nextPosition in-case of a negative modulo result */
+  nextPosition = (nextPosition - 1 + numSlides) % numSlides + 1;
+
+  document.getElementById('slide-' + position).classList.add('hidden');
+  document.getElementById('slide-' + nextPosition).classList.remove('hidden');
+
+  updateProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  window.history.replaceState({} , null, '#' + currentPosition());
+}
+
+
+/**
+ * Sets the progress indicator.
+ */
+function updateProgress() {
+  var progressBar = document.querySelector('.progress-bar');
+
+  if (progressBar !== null) {
+    var numSlides = document.getElementsByClassName('slide').length;
+    var position = currentPosition() - 1;
+    var percent = (numSlides === 1) ? 100 : 100 * position / (numSlides - 1);
+    progressBar.style.width = percent.toString() + '%';
+  }
+}
+
+
+/**
+ * Removes tabindex property from all links on the current slide, sets
+ * tabindex = -1 for all links on other slides. Prevents slides from appearing
+ * out of control.
+ */
+function updateTabIndex() {
+  var allLinks = document.querySelectorAll('.slide a');
+  var position = currentPosition();
+  var currentPageLinks = document.getElementById('slide-' + position).querySelectorAll('a');
+  var i;
+
+  for (i = 0; i < allLinks.length; i++) {
+    allLinks[i].setAttribute('tabindex', -1);
+  }
+
+  for (i = 0; i < currentPageLinks.length; i++) {
+    currentPageLinks[i].removeAttribute('tabindex');
+  }
+}
+
+/**
+ * Determines whether or not we are currently in full screen mode
+ */
+function isFullScreen() {
+  return document.fullscreenElement ||
+         document.mozFullScreenElement ||
+         document.webkitFullscreenElement ||
+         document.msFullscreenElement;
+}
+
+/**
+ * Toggle fullScreen mode on document element.
+ * Works on chrome (>= 15), firefox (>= 9), ie (>= 11), opera(>= 12.1), safari (>= 5).
+ */
+function toggleFullScreen() {
+  /* Convenient renames */
+  var docElem = document.documentElement;
+  var doc = document;
+
+  docElem.requestFullscreen =
+      docElem.requestFullscreen ||
+      docElem.msRequestFullscreen ||
+      docElem.mozRequestFullScreen ||
+      docElem.webkitRequestFullscreen.bind(docElem, Element.ALLOW_KEYBOARD_INPUT);
+
+  doc.exitFullscreen =
+      doc.exitFullscreen ||
+      doc.msExitFullscreen ||
+      doc.mozCancelFullScreen ||
+      doc.webkitExitFullscreen;
+
+  isFullScreen() ? doc.exitFullscreen() : docElem.requestFullscreen();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Update the tabindex to prevent weird slide transitioning
+  updateTabIndex();
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1);
+  if (page) {
+    navigate(parseInt(page) - 1);
+  }
+
+  document.onkeydown = function (e) {
+    var kc = e.keyCode;
+
+    // left, down, H, J, backspace, PgUp - BACK
+    // up, right, K, L, space, PgDn - FORWARD
+    // enter - FULLSCREEN
+    if (kc === 37 || kc === 40 || kc === 8 || kc === 72 || kc === 74 || kc === 33) {
+      navigate(-1);
+    } else if (kc === 38 || kc === 39 || kc === 32 || kc === 75 || kc === 76 || kc === 34) {
+      navigate(1);
+    } else if (kc === 13) {
+      toggleFullScreen();
+    }
+  };
+
+  if (document.querySelector('.next') && document.querySelector('.prev')) {
+    document.querySelector('.next').onclick = function (e) {
+      e.preventDefault();
+      navigate(1);
+    };
+
+    document.querySelector('.prev').onclick = function (e) {
+      e.preventDefault();
+      navigate(-1);
+    };
+  }
+});
+
+
+  </script>
+</body>
+</html>
